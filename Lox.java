@@ -16,6 +16,7 @@ import java.util.Scanner;
 public class Lox{
         // public and private are used to identify if object/method could be used outside the program (importing, for example)
         // static is used to tell that the object/method could be used without the instance of the parent object created
+        static boolean hadError = false;
         public static void main (String[] args) throws IOException{
                 // throws keyword is used before the {} of methods
                 // throws [exeption nam]: program will throw an error if that exception is true
@@ -60,23 +61,19 @@ public class Lox{
 
         }
         static void error(int line, String message){
-                System.out.println(line + " | " + message);
+                System.out.println("Error : " + message + " at line " + line);
+                hadError = true;
         }
         private static void run(String source) throws IOException {
                 Scanner scanner = new Scanner(source);
                 List<Token> tokens = scanner.scanTokens();
-                //both Scanner and Token will be implemented later (there are a default object named Scanner, not that one alr)
-
-                //debugging
+                // both Scanner and Token will be implemented later (there are a default object named Scanner, not that one alr)
+                // debugging
                 for(Token token:tokens)
                         System.out.println(token);
+                if(hadError) System.exit((65));
         }
-        public class Token {
-                
-        }
-        private static class Scanner {
-                public List<Token> scanTokens(){
+        // Token is called Lexeme ( a chunk of letter )
+        // That's why scanning is also called lexical analysis
 
-                }
-        }
 }
