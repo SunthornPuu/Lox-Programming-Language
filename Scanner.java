@@ -60,7 +60,8 @@ public class Scanner {
                 if(found) return 1.2;
                 if(c == '\"') return 2;
                 if(c >= '0' && c <= '9')return 3;
-                if(c == '\\' && source.charAt((curr+1)) == 'n') return 0;
+                if(c == '\\' && source.charAt((curr+1)) == 'n') {curr+=2; line++; return 0;}
+                if(c == ' ') {curr++; return 0;}
                 return 4;
         }
 
@@ -70,14 +71,13 @@ public class Scanner {
                 else if(type == 2) scan_string();
                 else if(type == 3) scan_number();
                 else if(type == 4) scan_ki();
-                else if(type == 0) curr+=2;
         }
 
         void scan_symbol(){
                 char c = runString.back();
                 for(int i=0;i<10;i++)
                         if(c==single_symbols.get(i))
-                                tokens.push_back(Token(symbols_type.get(i),""+c,null));
+                                tokens.push_back(Token(symbols_type.get(i),""+c,null,line));
                 curr++;
                 runnString.pop_back();
         }
@@ -85,37 +85,38 @@ public class Scanner {
                 char c = runnString.back();
                 if(c=='!'){
                         if(source.charAt(curr+1)=='=') {
-                                tokens.push_back(Token(BANG_EQUAL,"!=",null));
+                                tokens.push_back(Token(BANG_EQUAL,"!=",null,line));
                                 curr++;
                         }
-                        else tokens.push_back(Token(BANG,"!",null));
+                        else tokens.push_back(Token(BANG,"!",null,line));
                 }
                 else if(c=='>'){
                         if(source.charAt(curr+1)=='=') {
-                                tokens.push_back(Token(GREATER_EQUAL,">=",null));
+                                tokens.push_back(Token(GREATER_EQUAL,">=",null,line));
                                 curr++;
                         }
-                        else tokens.push_back(Token(GREATER,">",null));
+                        else tokens.push_back(Token(GREATER,">",null,line));
                 }
                 else if(c=='<'){
                         if(source.charAt(curr+1)=='=') {
-                                tokens.push_back(Token(LESS_EQUAL,"<=",null));
+                                tokens.push_back(Token(LESS_EQUAL,"<=",null,line));
                                 curr++;
                         }
-                        else tokens.push_back(Token(LESS,"<",null));
+                        else tokens.push_back(Token(LESS,"<",null,line));
                 }
                 else if(c=='='){
                         if(source.charAt(curr+1)=='=') {
-                                tokens.push_back(Token(EQUAL_EQUAL,"==",null));
+                                tokens.push_back(Token(EQUAL_EQUAL,"==",null,line));
                                 curr++;
                         }
-                        else tokens.push_back(Token(EQUAL,"=",null));
+                        else tokens.push_back(Token(EQUAL,"=",null,line));
                 }
                 else{
                         while(1){
                                 curr++;
-                                if(source.charAt(curr)=='n'&&source.charAt(curr-1)=='\\')
-                                        break;
+                                if(source.charAt(curr)=='n'&&source.charAt(curr-1)=='\\'){
+                                        line++;
+                                        break;}
                         }
                 }
                 runnString.pop_back();
@@ -129,7 +130,7 @@ public class Scanner {
                 }
                 curr++;
                 String literal = runnString.toString().substring(1,runnString.size()-1);
-                tokens.push_back(Token(STRING,runnString.toString(),f,literal));
+                tokens.push_back(Token(STRING,runnString.toString(),f,literal,line));
                 runnString.clear();
         }
         void scan_number(){
@@ -141,10 +142,34 @@ public class Scanner {
                 }
                 String s = runnString.toString();
                 flaot f = Float.parseFloat(s);
-                tokens.push_back(Token(NUMBER,s,f));
+                tokens.push_back(Token(NUMBER,s,f,line));
                 runnString.clear();
         }
-        void scan_ki(){
+        boolean legal(char c){
+                if(c>='A'&&c<='Z')return true;
+                if(c>='a'&&c<='z')return true;
+                if(c=='_')return true;
+                return false;
+        }
+        Vector<String> keywords = new Vector("and","or","class","if","else","false","true","fun","for","while","nil","print","return","super","this","var");
+        Vector<TokenType> keywords_type = new Vector(AND, OR, CLASS, IF, ELSE, FALSE, TRUE, FUN, FOR, WHILE,
+        NIL, PRINT, RETURN, SUPER, THIS, VAR);
 
+        void scan_ki(){
+                if(!legal(runnString.back()))tokens.push_back(new Token(ERROR,"Unknown syntax: "+runnString.back(),null,line));
+                while(1){
+                        curr++;
+                        if(legal(source.charAt(curr))){
+                                runnString.push_back(source.charAt(curr));
+                        }
+                        else break;
+                }
+                String str = runnString.toString();
+                runnString.clear();
+                for(int i=0;i<16;i++)
+                        if(str==keywords.get(i)){
+                                tokens.push_back(new Token(keywords_type[i],str,null,line));
+                        }
+                tokens.push_back(new Token(IDENTIFIER,str,null,line));
         }
 }

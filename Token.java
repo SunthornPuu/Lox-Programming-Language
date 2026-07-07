@@ -14,7 +14,7 @@ enum TokenType {
         IDENTIFIER, STRING, NUMBER, // not that all number in lox will be stored by10^-2 precision
         // keyword
         AND, OR, CLASS, IF, ELSE, FALSE, TRUE, FUN, FOR, WHILE,
-        NIL, PRINT, RETURN, SUPER, THIS, VAR, EOF
+        NIL, PRINT, RETURN, SUPER, THIS, VAR, EOF, ERROR
 
 }
 
@@ -36,4 +36,5 @@ public class Token {
         public String toString(){
                 return type + " " + lexeme + " " + literal; // used for debugging
         }
+
 }
