@@ -1,7 +1,6 @@
 // Token is called Lexeme ( a chunk of letter )
 // That's why scanning is also called lexical analysis
 
-package com.craftinginterpreter3s.lox;
 import java.util.List;
 
 enum TokenType {

@@ -1,0 +1,31 @@
+// --- Lox Scanner Test Script ---
+
+// 1. Test Variables, Numbers, and Basic Operators
+var score = 105.75;
+var multiplier = 2;
+var total = (score * multiplier) + 10 - 5;
+
+// 2. Test Comparison, Lookahead Operators
+
+if (total >= 200 && total != 500) {
+    print "High score achieved!"; 
+} else {
+    print "Keep trying.";
+}
+
+// 3. Test Strings and Multi-line Strings
+var simpleString = "Hello, Lox!";
+var multiLineString = "This string
+spans across
+multiple lines!";
+
+// 4. Test Functions and Keywords
+fun calculateBonus(points) {
+    if (points > 100) {
+        return true;
+    }
+    return false;
+}
+
+var hasBonus = calculateBonus(total);
+print hasBonus; // Should output true or false tokens
